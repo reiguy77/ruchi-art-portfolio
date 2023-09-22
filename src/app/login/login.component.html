@@ -1,0 +1,35 @@
+<div class="login-container">
+    <div class="login-form">
+
+      <div *ngIf="loggedIn">
+        You're already logged in!
+        <div>
+            <button (click)="logout()">Log out</button>
+        </div>
+      </div>
+
+      <div *ngIf="!loggedIn">
+            
+      <h2>Login</h2>
+
+  
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" [(ngModel)]="email" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" required>
+      </div>
+  
+      <button type="submit" (click)="login()">Login</button>
+      <p *ngIf="loginResult == false">Login was unsuccessful.</p>
+    </div>
+      <div class="forgot-password-container">
+        <a href="forgot-password" class="forgot-password">Forgot Password</a>
+      </div>
+    </div>
+  </div>
+<!-- 
+  <button (click)="createUser()">Create User</button> -->

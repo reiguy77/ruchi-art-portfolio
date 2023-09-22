@@ -1,0 +1,19 @@
+<!-- 
+<div style="display:flex" class="headers-container">
+    <h2 *ngFor="let headerKey of categoryKeys" (click)="selectedCategory = headerKey" class="headers" [ngClass]="{selected:selectedCategory ==  headerKey}">{{headerKey}}</h2>
+</div>  -->
+
+<div class="container gallery-container" >
+    <div *ngIf="admin.loggedIn && admin.adminMode" class="file-upload-container">
+        <image-upload
+        (imageUploaded)="onNewImagesLoaded($event)"
+        [isMultiple]="true"
+        ></image-upload>
+    </div>
+    <div *ngFor="let key of categoryKeys" style="width:90%; margin:auto">
+        <photo-gallery *ngIf="selectedCategory == key" [items]="allImages[key]" [hoverOptions]="hoverOptions" [adminMode] = "admin.adminMode" [hoverColor]="hoverOptions.overlayColor" @fadeInOut (updateImageProperties)="saveNewImageProperties($event)"></photo-gallery>
+    </div>
+   
+</div>
+
+

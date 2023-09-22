@@ -1,0 +1,13 @@
+<div [ngClass]="{'parallax-container': parallax}">
+  <div id='hero-image' class="hero-image-container" [style.background-image]="'url(' + imageUrl + ')'">
+    
+    <div class="hero-content">
+      <ng-content select="[hero-content]"></ng-content>
+    </div>
+    <div class='hero-footer'>
+      <ng-content  select="[hero-footer]"></ng-content>
+    </div>
+    <div *ngIf="showTint" class="overlay" ></div>
+  </div>
+</div>
+

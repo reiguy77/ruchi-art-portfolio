@@ -1,0 +1,30 @@
+<div class="wrapper" @fadeInOut>
+    <div style="width:90%">
+       
+        <div class="main-section">
+            <div class="main-body">
+                <h2 class="name">
+                    <editable-text 
+                    [value]="pageJson.title"
+                    [canEdit]="isLoggedIn"
+                    (onFinishedEditing)="pageJson.title = $event.value; updateJson($event)"
+                    ></editable-text>
+            
+                </h2>
+                <p >
+                    <editable-text 
+                    [value]="pageJson.bodyText"
+                    [canEdit]="isLoggedIn"
+                    (onFinishedEditing)="pageJson.bodyText = $event.value; updateJson($event)"
+                    [longForm]="true"
+                    ></editable-text>
+                </p>
+
+            </div>
+            <div class="main-image-container">
+                <img class="main-image" src="/assets/img/ruchi-art/Drawings/Pinocchio.JPG">
+            </div>
+        </div>
+    </div>
+    
+</div>

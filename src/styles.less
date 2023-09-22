@@ -1,1 +1,146 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('./variables.less');
+
+@import url('https://cdn.jsdelivr.net/npm/lightgallery@2.0.0-beta.4/css/lightgallery.css');
+@import url('https://cdn.jsdelivr.net/npm/lightgallery@2.0.0-beta.4/css/lg-zoom.css');
+@import url('https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.css');
+
+
+@font-face {
+    font-family: 'title-font';
+    src: url('src/assets/fonts/adequate/Adequate-ExtraLight.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+// @font-face {
+//     font-family: 'body-font';
+//     src: url('/assets/fonts/neo-latina/neo-latina-demo-FFP.ttf');
+//     font-weight: normal;
+//     font-style: normal;
+// }
+@font-face {
+    font-family: 'body-font';
+    src: url('assets/fonts/lato/Lato-Thin.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+// @font-face {
+//     font-family: 'title-font';
+//     src: url('assets/fonts/helvitica-now/HelveticaNowText-ExtraBold.ttf');
+//     font-weight: normal;
+//     font-style: normal;
+// }
+
+
+// * {
+//     font-family: 'body-font';
+// }
+
+h1, h2, h3, h4, h5, h6, a, label {
+
+    font-family: 'title-font';
+}
+
+p {
+    font-family: body-font;
+    font-weight: 100;
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 30px;
+    letter-spacing: 1.5px;
+}
+body{
+    margin:0px;
+    background-color: @secondary;
+    backdrop-filter: brightness(150%); 
+    opacity: 0.9;
+    // background: linear-gradient(180deg, #FFFFFF, #F5F5F5);
+}
+
+.lightGallery-captions{
+    background: rgba(255, 255, 255, 0.611);
+    color:black;
+    height:100px;
+    font-size: 30px !important;
+    margin-top: 30px;
+}
+
+button{
+    max-width: 200px;
+    margin: 10px;
+    border: 1px solid fade(@tint, 40);
+    background: none;
+    border-left:none;
+    border-top:none;
+    border-right:none;
+    padding:10px;
+    padding-left:20px;
+    padding-right: 40px;
+    border-radius: 5px;
+    // box-shadow: 0px 1px 1px 1px lightgray;
+    transition: all ease-in-out .2s;
+    font-size: 26px;
+}
+
+button:hover{
+    cursor:pointer;
+    background-repeat: no-repeat;
+    font-weight:bold;
+
+    box-shadow: inset 400px 0 0 0 @tint;
+    // filter: blur(20px) contrast(50);
+    // box-shadow: 0 0 0 50px #fff;
+}
+
+
+.container {
+    position: relative;
+    width:100%;
+    margin:auto;
+  }
+  .signature{
+    width: 100%;
+  }
+
+  #signature{
+    stroke-dasharray: 36485;
+    stroke-dashoffset: 36485;
+    stroke: @tint;
+    stroke-width: 10px;
+    fill: @secondary;
+    animation: drawSignature 12s ease;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes drawSignature {
+    to {
+        stroke-dashoffset: 0;
+    }
+  }
+
+  .wrapper{
+    width: 100%;
+    max-width: 1250px;
+    position: relative;
+    z-index: 100;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 85%;
+    max-width: 1250px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-bottom: 100px;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-direction:column;
+  }
+  
