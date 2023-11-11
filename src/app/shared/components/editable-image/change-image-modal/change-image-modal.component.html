@@ -1,0 +1,17 @@
+
+<div class="modal-header">
+    <h4 class="modal-title">Choose New Image</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+   <image-upload
+   (imageUploaded)="addImage($event)"
+   ></image-upload>
+
+</div>
+<div class="modal-footer">
+   
+    <button type="button" class="cancel-button" aria-label="Close" (click)="close()">Cancel</button>
+
+    <button type="button" class="confirm-button" aria-label="Close" (click)="confirm()">Add</button>
+</div>

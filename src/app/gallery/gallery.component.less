@@ -36,14 +36,22 @@
     font-weight: bold;
 }
 
-.gallery-container{
-    margin-top: 50px;
-}
 
-.file-upload-container{
-    width: 70%;
+.edit-bar{
+    width: 100%;
+    position: sticky;
+    top: 0px; /* Adjust as needed */
+    z-index: 999; 
+    height: fit-content;
+    background: @secondary;
+    padding:10px;
+}
+.category-edit-button{
+    position: relative;
+    display:block;
     margin:auto;
 }
+
 .upload-image-text{
     color: @primary;
     

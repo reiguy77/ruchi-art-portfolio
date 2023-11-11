@@ -1,0 +1,20 @@
+
+    <div class="modal-header">
+        <h4 class="modal-title">{{title}}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+    </div>
+    <div class="modal-body">
+        <div style="margin: 30px;">
+
+       <h3 style="text-align:center">{{action}}</h3>
+       <h3 style="text-align:center">Are you sure?</h3>
+       <br/><br/>
+       <h4 *ngIf="!undoable" style="text-align:center">You will not be able to undo this action.</h4>
+        </div>
+    </div>
+    <div class="modal-footer">
+       
+        <button type="button" class="cancel-button" aria-label="Close" (click)="close()">Cancel</button>
+
+        <button type="button" class="confirm-button" aria-label="Close" (click)="confirm()">Confirm</button>
+    </div>

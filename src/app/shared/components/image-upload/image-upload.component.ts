@@ -8,11 +8,19 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ImageUploadComponent {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    if(this.uploadText != 'Choose Images'){
+      this.singularUploadText = this.uploadText;
+    }
+  }
 
 
   @Input() isMultiple = false;
+  @Input() uploadText = 'Choose Images';
   @Output() imageUploaded = new EventEmitter<File[]>();
+  singularUploadText = 'Choose Image';
+
+  
   
   handleFileInput(event:any) {
     let files : File [];

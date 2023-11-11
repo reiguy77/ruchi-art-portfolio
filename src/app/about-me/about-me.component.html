@@ -1,28 +1,34 @@
 <div class="wrapper" @fadeInOut>
-    <div style="width:90%">
+    <div style="width:100%">
        
         <div class="main-section">
             <div class="main-body">
                 <h2 class="name">
                     <editable-text 
                     [value]="pageJson.title"
-                    [canEdit]="isLoggedIn"
-                    (onFinishedEditing)="pageJson.title = $event.value; updateJson($event)"
+                    [canEdit]="userService.admin.editMode"
+                    (onFinishedEditing)="pageJson.title = $event.value; updatePageJson()"
                     ></editable-text>
             
                 </h2>
                 <p >
                     <editable-text 
                     [value]="pageJson.bodyText"
-                    [canEdit]="isLoggedIn"
-                    (onFinishedEditing)="pageJson.bodyText = $event.value; updateJson($event)"
+                    [canEdit]="userService.admin.editMode"
+                    (onFinishedEditing)="pageJson.bodyText = $event.value; updatePageJson()"
                     [longForm]="true"
                     ></editable-text>
                 </p>
 
             </div>
             <div class="main-image-container">
-                <img class="main-image" src="/assets/img/ruchi-art/Drawings/Pinocchio.JPG">
+                <editable-image
+                [imageUrl] = "environment.server.protocol+'://'+environment.server.host+'/'+mainImageUrl"
+                (imageChange)="updateMainImage($event)"
+                [editMode] = "userService.admin.editMode"
+                >
+
+                </editable-image>
             </div>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SimpleChange } from '@angular/core';
 
 import { environment } from '../../../environments/environment';
 import { User } from '../../login/user';
@@ -16,6 +16,12 @@ export class UserService {
   refresh_token?:string;
   expires_at?:string;
 
+  admin = {
+    loggedIn: false,
+    editMode: false
+  }
+
+
   async login(email:string, password:string){
     const options = {
       method: 'POST',
@@ -32,16 +38,35 @@ export class UserService {
     let data = await resp.json();
     if(!data.error){
       this.processTokenResponse(data);
+      this.updateAdmin(true, true);
       return true;
     }
     return false;
     // return categories;
   }
 
+  async createUser(user:User, password:string){
+    const options = {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email:user.email,
+        password,
+        appId: environment.appId
+      })
+    }
+    let resp = await fetch(`${this.userBaseUrl}/`, options);
+    let data = await resp.json();
+    return data;
+  }
+
   logout(){
     this.refresh_token = undefined;
     this.access_token = undefined;
     this.expires_at = undefined;
+    this.updateAdmin(false, false);
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('expires_at');
@@ -132,12 +157,28 @@ export class UserService {
     }
   }
 
+  updateAdmin(loggedIn:boolean, editMode:boolean){
+    localStorage.setItem('loggedIn', '' + loggedIn);
+    localStorage.setItem('editMode', '' + editMode);
+    this.admin.loggedIn = loggedIn;
+    this.admin.editMode = editMode;
+  }
+
   async init(){
     this.access_token = localStorage.getItem('access_token') ?? undefined;
     this.refresh_token = localStorage.getItem('refresh_token') ?? undefined;
     this.expires_at = localStorage.getItem('expires_at') ?? undefined;
+
+    this.admin.loggedIn = JSON.parse(localStorage.getItem('loggedIn') ?? '') ?? false;
+    this.admin.editMode = JSON.parse(localStorage.getItem('editMode') ?? '') ?? false;
+    // this.updateAdmin(this.admin.loggedIn, this.admin.loggedIn);
   }
 
+  ngOnChange(changes:SimpleChange){
+    if('admin' in changes){
+      console.log(changes);
+    }
+  }
 
   handleError(error: Error) {
     console.error(error);

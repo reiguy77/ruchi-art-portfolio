@@ -1,0 +1,72 @@
+
+<div class="modal-header">
+    <h4 class="modal-title">Edit "{{category.displayName}}"</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link " [ngClass]= "{'active':activeTab == 'tab1'}" href="#tab1" id="tab1-tab" data-toggle="tab"  role="tab" aria-controls="tab1" aria-selected="true" (click)="activeTab = 'tab1'">Add Images</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" [ngClass]= "{'active':activeTab == 'tab2'}" id="tab2-tab" href="#tab2" data-toggle="tab"  role="tab" aria-controls="tab2" aria-selected="false" (click)="activeTab = 'tab2'">Update Layout</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" [ngClass]= "{'active':activeTab == 'tab3'}" id="tab3-tab" href="#tab3" data-toggle="tab"  role="tab" aria-controls="tab3" aria-selected="false" (click)="activeTab = 'tab3'">Modify Category</a>
+        </li>
+        <!-- Add more tab items as needed -->
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade tab-pane-padded" [ngClass]= "{'active':activeTab == 'tab1', 'show':activeTab == 'tab1'}" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+            <br/>
+                <image-upload
+                [uploadText]="'Add images to category'"
+                [isMultiple]="true"
+                (imageUploaded)="addImages($event)"
+                ></image-upload>
+        </div>
+        <div class="tab-pane fade tab-pane-padded" [ngClass]= "{'active':activeTab == 'tab2', 'show':activeTab == 'tab2'}" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+            
+            <div class="category-option">
+                <label for="lg-col"># of gallery columns on large screens:</label>
+                <input type="number" [(ngModel)] = "galleryCategoryProperties.numColumnsLarge" id="lg-col" name="lg-col" min="1" max="10">
+            </div>
+            
+            <div class="category-option">
+                <label for="sm-col"># of gallery columns on small screens:</label>
+                <input type="number" id="sm-col" name="sm-col" [(ngModel)] = "galleryCategoryProperties.numColumnsSmall" min="1" max="10">
+            </div>
+            <div class="category-option">
+                <label for="show-overlay">Show overlay on hover:</label>
+                <input type="checkbox" id="show-overlay" name="show-overlay" [(ngModel)] = "galleryCategoryProperties.showOverlay" >
+            </div>
+            <div class="category-option" *ngIf="galleryCategoryProperties.showOverlay">
+                <label for="">Hover color:</label>
+                <color-picker
+                    [(color)]="galleryCategoryProperties.overlayColor"
+                    [position]="'bottom-right'">
+                </color-picker>  
+            </div>
+
+
+        </div>
+        <div class="tab-pane fade tab-pane-padded" [ngClass]= "{'active':activeTab == 'tab3', 'show':activeTab == 'tab3'}" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+            <!-- <label for="categoryName" style="margin-right:20px">Category Name:</label>
+            <h4 id="categoryName" style="display:inline">{{category.displayName}}</h4> -->
+            <div class="category-option">
+                <label for="categoryName" style="margin-right:20px">Update Category Name:</label>
+                <input type="text" id="categoryName" [(ngModel)]="category.displayName">
+            </div>
+        </div>
+    </div>
+    
+   
+
+</div>
+<div class="modal-footer">
+   
+    <button type="button" class="cancel-btn"  style='margin-right: auto;' aria-label="Close" (click)="close()">Cancel</button>
+    <button type="button" class="danger-btn" aria-label="Delete" (click)="deleteCategory()">Delete Category</button>
+    <button type="button" class="confirm-btn" aria-label="Close" (click)="confirm()">{{activeTab == 'tab1' ? 'Add Images' : activeTab == 'tab2' ? 'Update Layout' : 'Update Category'}}</button>
+    
+</div>

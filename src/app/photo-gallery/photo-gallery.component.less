@@ -18,9 +18,7 @@
 	gap: var(--gap);
 	row-gap: @row-gap;
 	grid-auto-rows: var(--row_height);
-	color:#fc853a;
-	
-	
+	color:#fc853a;	
 }
 
 @media screen and (max-width: 1024px) {
@@ -92,7 +90,7 @@
 	opacity: 0;
   }
 .img-wrapper-hover:hover .pseudo-element{
-	opacity: .6;
+	opacity: 1;
 }
 
 .img-wrapper-hover:hover .description-container{
@@ -146,4 +144,12 @@
   
   .fade-in-image.loaded {
 	opacity: 1; /* When the image is loaded, change opacity to 1 for fade-in effect */
+  }
+
+  #lg-download-3{
+	margin: 9px;
+  }
+
+  .no-pointer-events{
+	pointer-events: none;
   }

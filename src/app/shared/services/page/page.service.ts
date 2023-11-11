@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -9,7 +9,7 @@ export class PageService {
 
   pageBaseUrl = `${environment.server.protocol}://${environment.server.host}/api/page`;
   appId = environment.appId;
-  async updatePage(pageName:String, pageJson:any){
+  async updatePage(pageName:string, pageJson:any){
     const options = {
       method: 'POST',
       headers: {
@@ -23,12 +23,11 @@ export class PageService {
     }
     let resp = await fetch(`${this.pageBaseUrl}/`, options);
     let data = await resp.json();
-
-    console.log('UPDATE PAGR REUSLT: ', data);
+    console.log('response:',data)
     return data;
   }
   
-  async getPage(pageName:String){
+  async getPage(pageName:string){
 
     const options = {
       method: 'GET',
@@ -39,12 +38,6 @@ export class PageService {
 
     let resp = await fetch(`${this.pageBaseUrl}/${this.appId}/${pageName}`, options);
     let data = await resp.json();
-    // let data = {
-    //   error:false, pageJson:{
-    //   title:'test',
-    //   bodyText:'Test2'
-    // }}
-    console.log(data);
     if(!data.error){
       return data.page.pageJson;
     }

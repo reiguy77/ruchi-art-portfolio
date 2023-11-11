@@ -1,2 +1,13 @@
-<toolbar></toolbar>
+<toolbar style="z-index: 99999;"></toolbar>
+<div *ngIf="userService.admin.loggedIn" class="admin-mode-input">
+    <div class="slider">
+        <input type="checkbox" id="editModeToggle" 
+        [ngModel]="userService.admin.editMode" 
+        (change)="userService.updateAdmin(true, !userService.admin.editMode)"
+        >
+        <label for="editModeToggle" class="slider-toggle"></label>
+    </div>
+</div>
+<button *ngIf="userService.admin.loggedIn && userService.admin.editMode" matTooltip="Info about the action"
+#tooltip="matTooltip" (click)="logout()" class="logout">Logout</button>
 <router-outlet></router-outlet>

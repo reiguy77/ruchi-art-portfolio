@@ -1,0 +1,23 @@
+
+<div class="modal-header">
+    <h4 class="modal-title">Add Category</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+<div class="modal-body">
+    <label for="categoryName" style="margin-right:20px">Category Title:</label>
+   <input type="text" id="categoryName" [(ngModel)]="categoryName">
+   <br/>
+   <br/>
+   <br/>
+   <image-upload
+   [isMultiple]="true"
+   (imageUploaded)="addImages($event)"
+   ></image-upload>
+
+</div>
+<div class="modal-footer">
+   
+    <button type="button" class="cancel-button" aria-label="Close" (click)="close()">Cancel</button>
+
+    <button type="button" class="confirm-button" aria-label="Close" (click)="confirm()">Add</button>
+</div>

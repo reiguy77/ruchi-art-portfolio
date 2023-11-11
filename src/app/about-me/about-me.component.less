@@ -21,10 +21,22 @@
 .main-image-container{
     width: 60%;
     object-fit:contain;
+    height: auto;
+    max-height: 100vh;
 }
 
 .main-image {
     width: 100%;
     height:auto;
     object-fit:contain;
+}
+
+@media screen and (max-width: 999px) {
+    .main-section{
+        flex-direction:column;
+    }    
+    .main-body{
+        width:100%
+    }
+    
 }

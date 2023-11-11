@@ -1,1 +1,3 @@
-<div class="color-picker" [(colorPicker)]="color" [style.background]="color" [cpEyeDropper]="true" (colorPickerChange)="onColorChange()" [cpPosition]="position"></div>
+<div *ngIf="!changingPosition">
+    <div  #colorPicker [id]='id' class="color-picker-placeholder" [(colorPicker)]="color" [style.background]="color" [cpEyeDropper]="true" (colorPickerChange)="onColorChange()" [cpPosition]="position"></div>
+</div>

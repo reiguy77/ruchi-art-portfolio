@@ -1,10 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import {style, state, animate, transition, trigger} from '@angular/animations';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/services/user.service';
 import { GalleryService } from './gallery.service';
+import { Category } from '../models/Category';
+import { ImageProperties } from '../shared/interfaces/image.interface';
+import { ImageService } from '../shared/services/image/image.service';
+import { PageService } from '../shared/services/page/page.service';
+import { PhotoGalleryComponent } from '../photo-gallery/photo-gallery.component';
 @Component({
   selector: 'app-gallery',
   templateUrl: './gallery.component.html',
@@ -25,86 +30,72 @@ export class GalleryComponent {
   allImages:any;
   categoryKeys?:string[];
   loadedImages: boolean[] = [];
-  selectedCategory?:string = '';
-  categories?:string[];
-  admin = {
-    adminMode: false,
-    loggedIn: false
-  }
-  hoverOptions = {
-    showZoom : true,
-    showOverlay : true,
-    overlayColor : '#fc853aaa',
-    numColumns : '3',
-  }
+  selectedCategory?:Category = new Category('');
+  categories:Category[] = [];
+  images: Map<String, {url:string, properties: any, imageId: string}[]> = new Map();
+  processedImages: {id: string, size: string, src: string, 
+    thumb:string,  
+    subHtml:string, 
+    imageId:string,
+    properties:ImageProperties
+  }[] = [];
+  newFiles: File[] = [];
 
-  constructor(private http: HttpClient, private sanitizer: DomSanitizer, private route: ActivatedRoute, private userService:UserService,
-    private galleryService:GalleryService) {
-    this.init();
-
+  @ViewChild("photoGallery") photoGallery!: PhotoGalleryComponent;
+  constructor(private http: HttpClient, private sanitizer: DomSanitizer, 
+    private route: ActivatedRoute, protected userService:UserService,
+    protected galleryService:GalleryService, private imageService:ImageService) {
   }
 
-  async init(){
-    this.admin.loggedIn = await this.userService.isAuthenticated();
-    this.admin.adminMode = this.admin.loggedIn;
-  }
 
-  ngOnInit() {
+  async ngOnInit() {
+    let routeCategory = this.route.snapshot.paramMap.get('category') ?? "";
+    this.selectedCategory = await this.galleryService.getSelectedCategory(routeCategory);
+    this.galleryService.getPageJson();
     this.loadImages().then(()=>{
-
       this.processImages();
     });
-
-    this.selectedCategory = this.route.snapshot.paramMap.get('category')?.toUpperCase();
-    
   }
+
+
   processImages(){
-    this.categoryKeys = Object.keys(this.allImages);
-    this.categoryKeys.forEach((key, index, array)=>{
-      let newKey = key.toUpperCase();
-      array[index] = newKey;
-      delete Object.assign(this.allImages, {[newKey]: this.allImages[key] })[key];
-    })
-    
-    this.categoryKeys.forEach((key)=>{
-      this.allImages[key] = this.allImages[key].map((image:any, index:number)=>{
-        let spanRow = '';
-        let spanCol = '';
-        let url = '';
-        let background = '#ffffff';
-        if(typeof(image) == 'object'){
-            url = image.url;
-            spanRow = 'span '+image.spanRow;
-            spanCol = 'span ' + image.spanCol;
-            background = image.background;
+    let temp;
+    if(this.selectedCategory?._id){
+      temp = this.images.get(this.selectedCategory._id);
+    }
+    if(temp){
+      this.processedImages = temp.map((image, index)=>{
+        
+        let imageProperties = image.properties;
+        if(!imageProperties){
+          imageProperties = {};
         }
-        else{
-          url = image;
-        }
-        if(url.toLowerCase().includes('dance')){
-          console.log('hello!')
-          spanRow = 'span 2';
-        }
-        if(url.includes('B2F38FE6-96E5-4D39-8511-805B11B246DE')){
-          spanCol = 'span 2';
-        }
-        return {
-          id: index, size: '140', src: url, 
-          thumb:url.replace('Records/', 'Records/compressed_'),  subHtml:'<h1></h1>', description:'Temp', spanCol, spanRow, background
-        }
-      })
-    })
-  }
-  async loadImages() {
-    this.categoryKeys  = await this.galleryService.getCategories();
-    let resp = await fetch('assets/json/current-paintings.json');
-    this.allImages = await resp.json();
-    // Initialize the loadedImages array with all false values (LQIPs are shown initially)
-    this.loadedImages = new Array(this.allImages.length).fill(false);
-  }
 
-  saveNewImageProperties(event:any){
-    console.log(event);
+        return {
+          id: index+'', 
+          imageId: image.imageId,
+          size: '1400-933', 
+          src: image.url, 
+          thumb:image.url,  
+          subHtml:'<h1></h1>', 
+          properties:{
+            description: imageProperties.hasOwnProperty('description') ? imageProperties.description : '',
+            descriptionColor: imageProperties.hasOwnProperty('descriptionColor') ? imageProperties.descriptionColor : '#000000',
+            spanCol: imageProperties.hasOwnProperty('spanCol') ? imageProperties.spanCol : '',
+            spanRow: imageProperties.hasOwnProperty('spanRow') ? imageProperties.spanRow : '',
+            backgroundColor: imageProperties.hasOwnProperty('backgroundColor') ? imageProperties.backgroundColor :  '#ffffff',
+          }
+        }
+      });
+    }
+    
+  }
+  
+  async loadImages() {
+     let images =  await this.imageService.getImagesByCategoryId(this.selectedCategory?._id);
+     if(this.selectedCategory?._id){
+        this.images.set(this.selectedCategory._id, images);
+     }
   }
 
   onImageLoaded(index: number) {
@@ -112,7 +103,13 @@ export class GalleryComponent {
   }
 
   onNewImagesLoaded(files:File[]){
-    console.log(files);
+    this.newFiles = files;
+  }
+
+  async openCategoryEditor(){
+    if(this.selectedCategory){
+      let resp = await this.galleryService.openCategoryEditor(this.selectedCategory);
+    }
   }
 
 }

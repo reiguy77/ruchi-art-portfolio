@@ -6,10 +6,10 @@ export class User{
     email: string;
     phoneNumber?: string;
     birthDate?: Date;
-    address?: String;
-    apiKey?: String;
+    address?: string;
+    apiKey?: string;
     userGroupIds?: [String];
-    userId?: String;
+    userId?: string;
 
 
     constructor(

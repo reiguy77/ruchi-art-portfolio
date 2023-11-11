@@ -1,3 +1,4 @@
-<label for="image">Choose an image to upload:</label>
-<input type="file" id="image" name="image" (change)="handleFileInput($event)" [multiple]="isMultiple">
+<label for="image" *ngIf="!isMultiple">{{singularUploadText}}:</label>
+<label for="image" *ngIf="isMultiple">{{uploadText}}:</label>
+<input type="file" id="image" name="image" (change)="handleFileInput($event)" [multiple]="isMultiple" accept="image/*, .heic">
 

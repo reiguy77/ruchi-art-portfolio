@@ -1,0 +1,38 @@
+<div [class]="position" class="editor-container" *ngIf="show" (click)="$event.stopPropagation()">
+    <div class="button-container">
+        <div class="position-btn" [class]="position+'-position'" (click)="updatePosition()"></div>
+        <div class="exit-btn" (click)="close()"></div>
+    </div>
+    <h4 style="text-align: center;">Image Editor</h4>
+    <div class="editor-content-container" [class]="position">
+        <div class="property-container">
+            <p class="title">
+                Background color: 
+            </p>
+            <color-picker
+            [(color)]="imageProperties.backgroundColor"
+            [position]="colorPositionMap[position]"
+            (colorChange)="updateProperties();">
+            </color-picker>                
+        </div>
+        <div class="property-container">
+            <p class="title">
+                Description:
+            </p>
+            <input [(ngModel)]="imageProperties.description" (change)="updateProperties()">          
+        </div>
+        <div class="property-container">
+            <p class="title">
+                Description text color: 
+            </p>
+            <color-picker
+            [(color)]="imageProperties.descriptionColor"
+            [position]="colorPositionMap[position]"
+            (colorChange)="updateProperties(); ">
+            </color-picker>
+        </div>
+        <div class="property-container">
+            <button class="danger-btn" (click)="deleteImage()">Delete Image</button>
+        </div>
+    </div>
+</div>

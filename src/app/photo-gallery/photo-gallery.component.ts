@@ -1,12 +1,14 @@
-import { Component, Input, ChangeDetectorRef, ChangeDetectionStrategy, SimpleChanges, ViewChild, Output, EventEmitter, HostBinding, OnChanges, Renderer2, ElementRef } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, ChangeDetectionStrategy, SimpleChanges, ViewChild, Output, EventEmitter, HostBinding, OnChanges, Renderer2, ElementRef, HostListener } from '@angular/core';
 import { BeforeSlideDetail } from 'lightgallery/lg-events';
-import lightGallery from 'lightgallery';
 import { LightGallery } from 'lightgallery/lightgallery';
 import { LightGallerySettings } from 'lightgallery/lg-settings';
-// Look into using lightgallery
 import * as uuid from 'uuid';
 import { RoleAuthorizationService } from '../shared/services/role-authorization.service';
 import { Role } from '../shared/Role';
+import lightGallery from 'lightgallery';
+import { ImageProperties } from '../shared/interfaces/image.interface';
+import { GalleryCategoryProperties } from '../shared/interfaces/galleryCategoryProperties.interface';
+
 
 @Component({
   selector: 'photo-gallery',
@@ -20,19 +22,22 @@ export class PhotoGalleryComponent implements OnChanges {
   private readonly editors: Role[] = [new Role('Agent'), new Role('Administrator')];
   canEdit:Boolean = false;
 
-  // public get canEdit(): boolean { return this.auth.isAuthorized(this.editors); }
-
-  @Input () items : {id: String, size: String, src: String, 
-    thumb:String,  subHtml:String, description:String, spanCol?:number, spanRow?:number, background?:string}[] = [];
-  @Input() hoverOptions : {numColumns: string, showZoom:Boolean, showOverlay:Boolean, overlayColor:string} = {numColumns: '4', showZoom: true, showOverlay: true, overlayColor: 'rgba(0, 0, 0, 0.158)'};
-  @Input() type? : string = "";
-  @Input() hoverColor :string = '';
-  @Input() adminMode: boolean = false;
+  @Input () items : {
+    id: string, 
+    imageId:string,
+    size: string, 
+    src: string, 
+    thumb:string,  
+    subHtml:string,
+    properties: ImageProperties}[] = [];
+  @Output() itemsChange:EventEmitter<any> = new EventEmitter();
+  @Input() galleryCategoryProperties : GalleryCategoryProperties = {numColumnsLarge: '4', showOverlay: true, overlayColor: 'rgba(0, 0, 0, 0.158)', numColumnsSmall: '1', descriptionColor:'#000000'};
+  @Input() editMode: boolean = false;
   @Output() imageClicked: EventEmitter<any> = new EventEmitter();
   @Output() updateImageProperties: EventEmitter<any> = new EventEmitter();
 
   @HostBinding('style.--num-columns')
-      num_columns = this.hoverOptions.numColumns;
+      num_columns = this.galleryCategoryProperties.numColumnsLarge;
     
   @HostBinding('style.--hover-zoom')
       hover_zoom = '1';
@@ -41,7 +46,7 @@ export class PhotoGalleryComponent implements OnChanges {
     hover_opacity = '0';
 
   @HostBinding('style.--hover-color')
-    hover_color = this.hoverOptions.overlayColor;
+    hover_color = this.galleryCategoryProperties.overlayColor;
   
 
 
@@ -51,7 +56,7 @@ export class PhotoGalleryComponent implements OnChanges {
 
 
   showInformation : Boolean = false;
-  imageObjects: {'url':String, 'description': String, 'tags': [], 'showInformation': Boolean, 
+  imageObjects: {'url':string, 'description': string, 'tags': [], 'showInformation': Boolean, 
   spanCol?:string, spanRow?:string}[] = [];
 
   private lightGallery!: LightGallery;
@@ -66,23 +71,29 @@ export class PhotoGalleryComponent implements OnChanges {
   settings = {
     counter: false,
     plugins: [],
-    thumbnail: true,
-
+    thumbnail: false,
     galleryId: "image-gallery_"+this.galleryId,
     captions: true,
     lastRow: "hide",
-    margins: 5
+    margins: 5,
+    download: false,
+    mobileSettings: {
+      controls: false,
+      showCloseIcon: false,
+      download: false,
+      rotate: false,
+    }
   };
 
+  constructor (private renderer: Renderer2, private el: ElementRef, private auth:RoleAuthorizationService,
+    private ref: ChangeDetectorRef){
 
-  
-  gallery:any;
-
-  constructor (private renderer: Renderer2, private el: ElementRef, private auth:RoleAuthorizationService){
+    this.setCSSProperties();   
+    console.log(this.galleryCategoryProperties.overlayColor);
   }
 
   onInit = (detail:any): void => {
-    this.lightGallery = detail.instance;    
+    this.lightGallery = detail.instance; 
   };
 
   openEditor($event:Event, index:number){
@@ -91,12 +102,16 @@ export class PhotoGalleryComponent implements OnChanges {
     this.sideEditorOpen = true;
     let img_wrapper = document.getElementById('image-wrapper_'+index);
     img_wrapper?.classList.remove('img-wrapper-hover');
+    let img = document.getElementById('grid-image-container_'+index);
+    img?.classList.add('no-pointer-events');
   }
 
   closeEditor(){
     this.sideEditorOpen = false;
     let img_wrapper = document.getElementById('image-wrapper_'+this.editingId);
     img_wrapper?.classList.add('img-wrapper-hover');
+    let img = document.getElementById('grid-image-container_'+this.editingId);
+    img?.classList.remove('no-pointer-events');
   }
 
   updateImageValues($event:any){
@@ -106,31 +121,44 @@ export class PhotoGalleryComponent implements OnChanges {
       newValues: $event});
   }
 
-
-
   ngOnInit() {
-    this.setCSSProperties();
-    
+    // this.setCSSProperties();
+    this.addEventListeners();
   }
 
 
+  addEventListeners(){
+    const lightGallery = document.getElementById('lightgallery');
+    const galleryItems = lightGallery?.querySelectorAll('div');
 
-
-
+    galleryItems?.forEach(item => {
+      item.addEventListener('click', (event) => {
+        if (this.sideEditorOpen) {
+          // Prevent LightGallery from opening
+          event.preventDefault();
+        }
+      });
+    });
+  }
   setCSSProperties() {
     let zoomRatio = '1.1';
     let opacity = '1';
-    this.num_columns = this.hoverOptions.numColumns;
-    this.hover_color = this.hoverOptions.overlayColor;
-    if(this.hoverOptions.showZoom){
-      this.hover_zoom = zoomRatio;
-    }
-    if(this.hoverOptions.showOverlay){
+    this.num_columns = this.galleryCategoryProperties.numColumnsLarge;
+    this.hover_color = this.galleryCategoryProperties.overlayColor;
+    this.hover_zoom = zoomRatio;
+    
+    if(this.galleryCategoryProperties.showOverlay){
       this.hover_opacity = opacity
     }
+    
   }
 
   ngAfterViewInit() {
+    this.setLightGallery();
+  }
+
+
+  setLightGallery(){
     const lgSettings: LightGallerySettings = {
       ...{ 
         onBeforeSlide: this.onBeforeSlide,
@@ -144,19 +172,11 @@ export class PhotoGalleryComponent implements OnChanges {
     const masonry = document.getElementById('image-gallery_'+this.galleryId)
       if(masonry){
         this.lightGallery = lightGallery(masonry, lgSettings);
+        this.lightGallery.refresh();
       }
-    });
+    });  
 
-    const fadeImages = document.querySelectorAll('.fade-in-image');
-
-    fadeImages.forEach(image => {
-      image.addEventListener('load', () => {
-        image.classList.add('loaded');
-      });
-    });
-  
   }
-
   addImage = () => {
     this.items = [
       ...this.items,
@@ -171,14 +191,15 @@ export class PhotoGalleryComponent implements OnChanges {
   };
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('Change:',changes);
-      if (changes['hoverOptions'] && changes['hoverOptions'].currentValue) {
-        console.log(changes['hoverOptions'].currentValue);
-      }
     this.setCSSProperties();
+    this.setLightGallery();
   }
 
+  removeImage(editingId:number){
+    this.sideEditorOpen = false;
+    // this.ref.detectChanges();
+    this.items.splice(editingId, 1);
+    this.itemsChange.emit(this.items);
+  }
 
-  // What I want is an image gallery that has select photos that should stand out
-  // The others will fit in around these
 }

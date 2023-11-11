@@ -5,10 +5,11 @@
 @import url('https://cdn.jsdelivr.net/npm/lightgallery@2.0.0-beta.4/css/lg-zoom.css');
 @import url('https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.css');
 
+@import "~bootstrap/dist/css/bootstrap.min.css";
 
 @font-face {
     font-family: 'title-font';
-    src: url('src/assets/fonts/adequate/Adequate-ExtraLight.ttf');
+    src: url('assets/fonts/Assistant/Assistant-VariableFont_wght.ttf');
     font-weight: normal;
     font-style: normal;
 }
@@ -36,7 +37,7 @@
 //     font-family: 'body-font';
 // }
 
-h1, h2, h3, h4, h5, h6, a, label {
+h1, h2, h3, h4, h5, h6, a, label, button {
 
     font-family: 'title-font';
 }
@@ -50,13 +51,6 @@ p {
     line-height: 30px;
     letter-spacing: 1.5px;
 }
-body{
-    margin:0px;
-    background-color: @secondary;
-    backdrop-filter: brightness(150%); 
-    opacity: 0.9;
-    // background: linear-gradient(180deg, #FFFFFF, #F5F5F5);
-}
 
 .lightGallery-captions{
     background: rgba(255, 255, 255, 0.611);
@@ -69,29 +63,27 @@ body{
 button{
     max-width: 200px;
     margin: 10px;
-    border: 1px solid fade(@tint, 40);
-    background: none;
-    border-left:none;
-    border-top:none;
-    border-right:none;
-    padding:10px;
-    padding-left:20px;
-    padding-right: 40px;
-    border-radius: 5px;
+    border: 1px solid fade(@primary, 40);
     // box-shadow: 0px 1px 1px 1px lightgray;
-    transition: all ease-in-out .2s;
-    font-size: 26px;
+    background:@secondary;
+    padding:10px;
 }
 
 button:hover{
+    background-color: fade(@primary, 40);
+    color: @secondary;
     cursor:pointer;
-    background-repeat: no-repeat;
-    font-weight:bold;
-
-    box-shadow: inset 400px 0 0 0 @tint;
-    // filter: blur(20px) contrast(50);
-    // box-shadow: 0 0 0 50px #fff;
 }
+
+// button:hover{
+//     cursor:pointer;
+//     background-repeat: no-repeat;
+//     font-weight:bold;
+
+//     box-shadow: inset 400px 0 0 0 @tint;
+//     // filter: blur(20px) contrast(50);
+//     // box-shadow: 0 0 0 50px #fff;
+// }
 
 
 .container {
@@ -144,3 +136,68 @@ button:hover{
     flex-direction:column;
   }
   
+
+  .danger-btn {
+    border: 1px solid @danger;
+    color: darken(@danger, 10);
+  }
+
+  .danger-btn:hover{
+    border: 1px solid white;
+    background: @danger;
+    color: @secondary;
+  }
+
+  /* slider.component.css */
+.slider {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.slider input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider-toggle {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider-toggle:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider-toggle {
+  background-color: @primary;
+}
+
+input:focus + .slider-toggle {
+  box-shadow: 0 0 1px @primary;
+}
+
+input:checked + .slider-toggle:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}

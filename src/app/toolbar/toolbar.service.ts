@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, of } from 'rxjs';
 import {filter, map} from 'rxjs/operators';
 import { GalleryService } from '../gallery/gallery.service';
-import { UserService } from '../shared/services/user.service';
+import { Category } from '../models/Category';
 
 
 
@@ -64,6 +64,7 @@ export class ToolbarService {
     const decodedString = decodeURIComponent(url);
     const segments = decodedString.split('/');
     this.portfolioCategories = await this.getPortfolioCategories();
+    console.log(this.portfolioCategories);
     if (segments.includes('gallery')) {
       let foundCategory:any = this.portfolioCategories.find((category:any)=>{
         if(segments.includes(category.name)){
@@ -79,15 +80,9 @@ export class ToolbarService {
     return '';
   }
 
-
   async getPortfolioCategories(){
     let categories =  await this.galleryService.getCategories();
-    return categories.map((item:String)=>{
-      return {
-        displayName:item.replace('-', ' '),
-        name:item
-      };
-    })
+    return categories;
   }
 
   getActiveTab(){

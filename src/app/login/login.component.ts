@@ -28,7 +28,7 @@ export class LoginComponent {
     if(this.email && this.password){
       let result = await this.userService.login(this.email, this.password);
       if(result){
-        window.open('gallery/RECORDS', '_self');
+        window.open('about-me', '_self');
       }
       else{
         this.loginResult = false;
@@ -48,9 +48,10 @@ export class LoginComponent {
   ngOnInit(){
   }
 
-  // createUser(){
-  //   let user = new User('maniarruchi@gmail.com');
-  //   let password = 'test';
-  //   this.userService.createUser(user, password);
-  // }
+  createUser(){
+    let user = new User('maniarruchi@gmail.com');
+    let password = 'artboss1998';
+    let result = this.userService.createUser(user, password);
+    console.log(result);
+  }
 }

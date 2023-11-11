@@ -1,22 +1,48 @@
 <!-- <div class="skewed-container"> -->
-<div>
-    <h1 class="name" (click)="openLink('about-me')">RUCHI MANIAR</h1>
+<div class="header">
+  <div *ngIf='!nameInline || smallScreensize' class="name-container" style="margin:auto;">
+    <i *ngIf='userService.admin.editMode && !smallScreensize' (click)="switchName($event)" class="fa-solid fa-arrow-right-arrow-left swap-name-icon"></i>
+    <h1 class="name" (click)="openLink('about-me')">Ruchi Maniar</h1>
+  </div>
+  <div style="margin:auto; display:flex; align-items: center; justify-content: center; position:relative">
+    <i class="fa-solid fa-bars menu-icon" (click)="dropdownOpen = !dropdownOpen"></i>
+    <nav class="centered-navbar" [ngStyle]="{'display': dropdownOpen ? 'block' : 'none'}">
+      <ul *ngIf='nameInline && !smallScreensize'>
+        
+        <div class="name-container">
+          <div>
+            <i *ngIf='userService.admin.editMode' (click)="switchName($event)" class="fa-solid fa-arrow-right-arrow-left swap-name-icon"></i>
+            <h1 class="name" (click)="openLink('about-me')" >Ruchi Maniar</h1>
+          </div>
+        </div>
+        <div  style="width: 30%; display:flex; flex-direction: column;">
+          <ul>
+            <ng-container *ngTemplateOutlet="sharedContent"></ng-container>
+          </ul>
+        </div>
+      </ul>
+        <ul *ngIf="!nameInline || smallScreensize">
+            <ng-container *ngTemplateOutlet="sharedContent"></ng-container>
+        </ul>
+  </nav>
+  </div>
 </div>
 
+<ng-template #sharedContent>
+  <li [ngClass]="{'active':(activeTab$ | async) == 'about-me'}"><a href="about-me">About Me</a></li>
+          <div class="dropdown">
+            <li  [ngClass]="{'active':(activeTab$ | async) == 'gallery'}"><a>Portfolio</a></li>
+            <div class="dropdown-content dropdown-menu-animate">
+                <a *ngFor="let subTab of portfolioSubTabs; let index=index" [href]="'gallery/' + subTab.name" [ngClass]="'dropdown_item-' + index" [class.active]="(activeSubTab$ | async) == subTab.displayName">
+                {{ subTab.displayName }}
+                </a>
+                <a *ngIf='admin.adminMode' [ngClass]="'dropdown_item-' + portfolioSubTabs?.length" (click)="openAddCategory()"><i class="fa fa-gear" style="margin-right:10px;"></i>Add Category</a>
+            </div>
+          </div>
+          
+          <li [ngClass]="{'active':(activeTab$ | async)  == 'contact'}"><a href="contact">Contact</a></li>
+</ng-template>
 
-<nav class="centered-navbar">
-    <ul>
-      <li [ngClass]="{'active':(activeTab$ | async) == 'about-me'}"><a href="about-me">ABOUT ME</a></li>
-      <div class="dropdown">
-        <li  [ngClass]="{'active':(activeTab$ | async) == 'gallery'}"><a>PORTFOLIO</a></li>
-        <div class="dropdown-content dropdown-menu-animate">
-            <a *ngFor="let subTab of portfolioSubTabs; let index=index" [href]="'gallery/' + subTab.name" [ngClass]="'dropdown_item-' + index" [class.active]="(activeSubTab$ | async) == subTab.displayName">
-            {{ subTab.displayName }}
-            </a>
-            <a  *ngIf='admin.adminMode' [ngClass]="'dropdown_item-' + portfolioSubTabs?.length" (click)="openAddCategory()"><i class="fa fa-gear" style="margin-right:10px;"></i>Add Category</a>
-         </div>
-      </div>
-      
-      <li [ngClass]="{'active':(activeTab$ | async)  == 'contact'}"><a href="contact">CONTACT</a></li>
-    </ul>
-</nav>
+
+
+
