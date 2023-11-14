@@ -1,26 +1,18 @@
-<!-- 
-<div style="display:flex" class="headers-container">
-    <h2 *ngFor="let headerKey of categoryKeys" (click)="selectedCategory = headerKey" class="headers" [ngClass]="{selected:selectedCategory ==  headerKey}">{{headerKey}}</h2>
-</div>  -->
-
 <div class="container">
-    
     <div style="width:90%; margin:auto; position:relative">
-        <div *ngIf="userService.admin.loggedIn && userService.admin.editMode"  class="edit-bar">
+        <div *ngIf="userService.admin.loggedIn && userService.admin.editMode" class="edit-bar">
             <button (click)="openCategoryEditor()" class="category-edit-button" >Edit Category</button>
+            <button (click)="dragAndDropViewOpen = !dragAndDropViewOpen" class="category-edit-button" >
+                {{dragAndDropViewOpen ? "Close Editor" : "Move Images"}}
+            </button>
         </div>
-        <photo-gallery #photoGallery [(items)]="processedImages" [galleryCategoryProperties]="galleryService.pageJson.galleryCategoryProperties" [editMode] = "userService.admin.editMode" @fadeInOut></photo-gallery>
+        <photo-gallery #photoGallery 
+        [(items)]="processedImages" 
+        [galleryCategoryProperties]="galleryService.pageJson.galleryCategoryProperties" 
+        [editMode] = "userService.admin.editMode" 
+        [dragAndDropViewOpen]="dragAndDropViewOpen" 
+        @fadeInOut></photo-gallery>
     </div>   
-    
-    <!-- <div *ngFor="let key of categoryKeys" style="width:90%; margin:auto">
-        <photo-gallery *ngIf="selectedCategory == key" [items]="allImages[key]" [hoverOptions]="hoverOptions" [adminMode] = "admin.adminMode" [hoverColor]="hoverOptions.overlayColor" @fadeInOut (updateImageProperties)="saveNewImageProperties($event)"></photo-gallery>
-    </div> -->
-    <!-- <img src="http://localhost:3000/2/ruchi/aaa/37d777cb-aa58-40d7-afcf-9d78aa4d010b.jpg"> -->
-   
 </div>
-
-<drag-and-drop>
-        
-</drag-and-drop>
 
 

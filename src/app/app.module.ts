@@ -34,6 +34,7 @@ import { ChangeImageModalComponent } from './shared/components/editable-image/ch
 import { DragAndDropComponent } from './shared/components/drag-and-drop/drag-and-drop.component';
 import { NgForOf, NgIf } from '@angular/common';
 import { GridsterComponent, GridsterItemComponent } from 'angular-gridster2';
+import { LoadingIndicatorComponent } from './shared/components/loading-indicator/loading-indicator.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +55,8 @@ import { GridsterComponent, GridsterItemComponent } from 'angular-gridster2';
     ConfirmationModalComponent,
     EditableImageComponent,
     ChangeImageModalComponent,
-    DragAndDropComponent
+    DragAndDropComponent,
+    LoadingIndicatorComponent
   ],
   imports: [
     BrowserModule,

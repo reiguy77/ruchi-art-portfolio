@@ -4,8 +4,10 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
 </div>
 <div class="modal-body">
+    <form #myForm="ngForm">
+
     <label for="categoryName" style="margin-right:20px">Category Title:</label>
-   <input type="text" id="categoryName" [(ngModel)]="categoryName">
+   <input id="categoryNameInput" type="text" id="categoryName" name="categoryName" [(ngModel)]="categoryName" required>
    <br/>
    <br/>
    <br/>
@@ -14,10 +16,11 @@
    (imageUploaded)="addImages($event)"
    ></image-upload>
 
+</form>
+
 </div>
 <div class="modal-footer">
    
     <button type="button" class="cancel-button" aria-label="Close" (click)="close()">Cancel</button>
-
-    <button type="button" class="confirm-button" aria-label="Close" (click)="confirm()">Add</button>
+    <button type="button" class="confirm-button" aria-label="Close" (click)="confirm()" [disabled]="myForm.invalid">Add Category</button>
 </div>

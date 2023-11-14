@@ -40,19 +40,43 @@
 .edit-bar{
     width: 100%;
     position: sticky;
-    top: 0px; /* Adjust as needed */
-    z-index: 999; 
+    top: 0px;
+    z-index: 999;
+    height: -moz-fit-content;
     height: fit-content;
-    background: @secondary;
-    padding:10px;
+    background: #ffffff;
+    padding: 10px;
+    display: flex;
+    align-content: center;
+
+    justify-content: center;
 }
+
 .category-edit-button{
-    position: relative;
-    display:block;
-    margin:auto;
+    // position: relative;
+    // display:block;
+    // margin:auto;
+
+    // margin:10px;
+    // padding:10px;
+    // border: 2px solid fade(@primary, 10);
+    // width: 200px
+    
+
 }
 
 .upload-image-text{
     color: @primary;
     
+}
+
+.btn-row-container{
+    display:flex;
+    flex-wrap: wrap;
+    max-width:90%;
+    margin: 10px;
+    flex-direction: row;
+}
+
+.btn-row-item{
 }

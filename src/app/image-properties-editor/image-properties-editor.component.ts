@@ -1,6 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, Output, SimpleChanges } from '@angular/core';
 import { ImageService } from '../shared/services/image/image.service'
 import { ConfirmationService } from '../shared/services/confirmation.service';
+import { ImageDisplayType } from '../shared/interfaces/image.interface';
 
 @Component({
   selector: 'image-properties-editor',
@@ -55,6 +56,15 @@ export class ImagePropertiesEditorComponent {
 
   updateProperties(){
     this.imageService.updateImageProperties(this.imageProperties, this.imageId);
+  }
+  updateImageDisplay(){
+    if(this.imageProperties.imageDisplay == ImageDisplayType.Contain){
+      this.imageProperties.imageDisplay = ImageDisplayType.Cover;
+    }
+    else{
+      this.imageProperties.imageDisplay = ImageDisplayType.Contain;
+    }
+    this.updateProperties();
   }
 
 

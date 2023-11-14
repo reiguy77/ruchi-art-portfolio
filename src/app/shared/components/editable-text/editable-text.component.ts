@@ -6,7 +6,7 @@ import * as uuid from 'uuid'
   styleUrls: ['./editable-text.component.less']
 })
 export class EditableTextComponent {
-  @Input() value: string = '';
+  @Input() value: string = 'Ruchi';
   @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
   @Input() edit: boolean = false;
   @Input() canEdit: boolean = false;

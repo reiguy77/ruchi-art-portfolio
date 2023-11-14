@@ -11,28 +11,18 @@
   }
 
 .image-grid{
-	--row_height: 50vh; 
-	--gap:@gap;
 	display: grid;
 	grid-template-columns: repeat(var(--num-columns), 1fr);
-	gap: var(--gap);
-	row-gap: @row-gap;
-	grid-auto-rows: var(--row_height);
+	grid-auto-rows: 300px;
 	color:#fc853a;	
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 900px) {
 	.image-grid {
-		--num_columns: 2;
-		--row_height: 50vw; 
+		display: block;
 	}
 	
 }  
-
-.grid-image-container:nth-child(2n) {
-	grid-row: span 1.5;
-	
-}
 
 .image-grid-row-2 {
 	grid-row: span 2;
@@ -66,7 +56,7 @@
     transition: all 1s ease;
 	width: 100%;
 	height: 100%;
-	object-fit: contain;
+	object-fit: cover;
 
 }
 

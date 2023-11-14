@@ -14,7 +14,7 @@ export class ToolbarComponent {
   @Input() tabs?: string[];
 
   constructor(private toolbarService:ToolbarService, protected userService:UserService,
-    private galleryService:GalleryService){
+    protected galleryService:GalleryService){
 
   }
 
@@ -30,9 +30,9 @@ export class ToolbarComponent {
   dropdownOpen = false;
   nameInline = true;
   smallScreensize = false;
+  name = "Ruchi Maniar";
 
   async ngOnInit(){
-    // this.toolbarService.setCurrentTab();
     this.activeTab$ = this.toolbarService.getActiveTab();
     this.activeSubTab$ = this.toolbarService.getActiveSubTab();
     this.portfolioSubTabs = await this.toolbarService.getPortfolioCategories();

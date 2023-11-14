@@ -38,7 +38,7 @@ export class PageService {
 
     let resp = await fetch(`${this.pageBaseUrl}/${this.appId}/${pageName}`, options);
     let data = await resp.json();
-    if(!data.error){
+    if(!data.error && data.page != null){
       return data.page.pageJson;
     }
     return {};

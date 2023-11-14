@@ -8,6 +8,8 @@ import { Role } from '../shared/Role';
 import lightGallery from 'lightgallery';
 import { ImageProperties } from '../shared/interfaces/image.interface';
 import { GalleryCategoryProperties } from '../shared/interfaces/galleryCategoryProperties.interface';
+import { GridItem } from '../shared/components/drag-and-drop/drag-and-drop.component';
+import { ImageService } from '../shared/services/image/image.service';
 
 
 @Component({
@@ -22,22 +24,23 @@ export class PhotoGalleryComponent implements OnChanges {
   private readonly editors: Role[] = [new Role('Agent'), new Role('Administrator')];
   canEdit:Boolean = false;
 
-  @Input () items : {
-    id: string, 
-    imageId:string,
-    size: string, 
-    src: string, 
-    thumb:string,  
-    subHtml:string,
-    properties: ImageProperties}[] = [];
+  @Input () items : PhotoGalleryItem[] = [];
   @Output() itemsChange:EventEmitter<any> = new EventEmitter();
-  @Input() galleryCategoryProperties : GalleryCategoryProperties = {numColumnsLarge: '4', showOverlay: true, overlayColor: 'rgba(0, 0, 0, 0.158)', numColumnsSmall: '1', descriptionColor:'#000000'};
+  @Input() galleryCategoryProperties : GalleryCategoryProperties = {
+    numColumns: '4', 
+    showOverlay: true, 
+    overlayColor: 'rgba(0, 0, 0, 0.158)', 
+    descriptionColor:'#000000',
+    rowGap: 20,
+    colGap: 20};
   @Input() editMode: boolean = false;
   @Output() imageClicked: EventEmitter<any> = new EventEmitter();
-  @Output() updateImageProperties: EventEmitter<any> = new EventEmitter();
+  @Input() dragAndDropViewOpen:boolean = false;
+
+  gridItems:GridItem[] = [];
 
   @HostBinding('style.--num-columns')
-      num_columns = this.galleryCategoryProperties.numColumnsLarge;
+      num_columns = this.galleryCategoryProperties.numColumns;
     
   @HostBinding('style.--hover-zoom')
       hover_zoom = '1';
@@ -86,10 +89,7 @@ export class PhotoGalleryComponent implements OnChanges {
   };
 
   constructor (private renderer: Renderer2, private el: ElementRef, private auth:RoleAuthorizationService,
-    private ref: ChangeDetectorRef){
-
-    this.setCSSProperties();   
-    console.log(this.galleryCategoryProperties.overlayColor);
+    private ref: ChangeDetectorRef, private imageService:ImageService){
   }
 
   onInit = (detail:any): void => {
@@ -114,16 +114,35 @@ export class PhotoGalleryComponent implements OnChanges {
     img?.classList.remove('no-pointer-events');
   }
 
-  updateImageValues($event:any){
-    this.items[this.editingId] = $event;
-    this.updateImageProperties.emit({
-      id: this.editingId, 
-      newValues: $event});
-  }
-
   ngOnInit() {
     // this.setCSSProperties();
     this.addEventListeners();
+    this.mapItemsToGridItems();
+    this.sortItems();
+  }
+
+  mapItemsToGridItems(){
+    this.gridItems = this.items.map((item)=>{
+      if(item.properties.spanCol > parseInt(this.galleryCategoryProperties.numColumns))
+      {
+        return  {
+          cols: 1,
+          rows: 1,
+          x: 1,
+          y: 1
+        } as GridItem
+      }
+      else{
+        return {
+          cols: item.properties.spanCol && item.properties.spanCol > 0 ? item.properties.spanCol : 1,
+          rows: item.properties.spanRow  && item.properties.spanRow > 0 ? item.properties.spanRow : 1,
+          x: item.properties.x ?? 0,
+          y: item.properties.y ?? 0,
+          imageUrl: item.src,
+          _id:item.imageId
+        } as GridItem;
+      }
+    });
   }
 
 
@@ -143,7 +162,7 @@ export class PhotoGalleryComponent implements OnChanges {
   setCSSProperties() {
     let zoomRatio = '1.1';
     let opacity = '1';
-    this.num_columns = this.galleryCategoryProperties.numColumnsLarge;
+    this.num_columns = this.galleryCategoryProperties.numColumns;
     this.hover_color = this.galleryCategoryProperties.overlayColor;
     this.hover_zoom = zoomRatio;
     
@@ -193,6 +212,10 @@ export class PhotoGalleryComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     this.setCSSProperties();
     this.setLightGallery();
+    if(changes['items']){
+      this.mapItemsToGridItems();
+      this.sortItems();
+    }
   }
 
   removeImage(editingId:number){
@@ -202,4 +225,67 @@ export class PhotoGalleryComponent implements OnChanges {
     this.itemsChange.emit(this.items);
   }
 
+  updateItems(newItems:GridItem[]){
+    let updatedOrderItems: PhotoGalleryItem[] = [];
+    newItems.forEach((item, index)=>{
+      let foundIndex;
+      let currItem = this.items.find((originalItem, currItemIndex)=>{
+        if(originalItem.imageId == item._id){
+          foundIndex = currItemIndex;
+          return true;
+        }
+        return false;
+      })
+      if(currItem){
+        let change = false;
+        if(item.cols != currItem.properties.spanCol){
+          currItem.properties.spanCol = item.cols;
+          change = true;
+        }
+        if(item.rows != currItem.properties.spanRow){
+          currItem.properties.spanRow = item.rows;
+          change = true;
+        }
+        if(item.x != currItem.properties.x){
+          currItem.properties.x = item.x;
+          change = true;
+        }
+        if(item.y != currItem.properties.y){
+          currItem.properties.y = item.y;
+          change = true;
+        }
+        if(change){
+          this.imageService.updateImageProperties(currItem.properties, currItem.imageId);
+        }
+        updatedOrderItems.push(currItem);
+      }
+    })
+    this.items = updatedOrderItems;
+  }
+
+  sortItems(){
+    this.items.sort(this.comparePositions)
+  }
+  comparePositions(a:PhotoGalleryItem, b:PhotoGalleryItem) {
+    if(a.properties.y != null && b.properties.y != null && a.properties.x != null && b.properties.x != null){
+      if(a.properties.y == b.properties.y){
+        return a.properties.x - b.properties.x
+      }
+      else{
+        return a.properties.y - b.properties.y;
+      }
+    }
+    return 1; 
+  }
 }
+
+
+interface PhotoGalleryItem {
+    id: string, 
+    imageId:string,
+    size: string, 
+    src: string, 
+    thumb:string,  
+    subHtml:string,
+    properties: ImageProperties
+  }

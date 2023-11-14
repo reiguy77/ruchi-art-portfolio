@@ -16,11 +16,12 @@ export class EditCategoryModalComponent {
   @Input() categoryName = '';
   @Input() category:Category = new Category('');
   @Input() galleryCategoryProperties:GalleryCategoryProperties = {
-    numColumnsLarge: '4', 
+    numColumns: '4', 
     showOverlay: true, 
     overlayColor: 'rgba(0, 0, 0, 0.158)', 
-    numColumnsSmall: '1', 
-    descriptionColor:'#000000'
+    descriptionColor:'#000000',
+    rowGap: 20,
+    colGap: 20
   };
   categoryImages:File[] = [];
   activeTab = "tab1";
@@ -74,7 +75,9 @@ export class EditCategoryModalComponent {
 
   confirm() {
     if(this.activeTab == "tab1"){
-      this.imageService.addImages(this.category.name, this.categoryImages);
+      this.imageService.addImages(this.category.name, this.categoryImages).then(()=>{
+        location.reload();
+      });
       this.modalService?.close({categoryName: this.categoryName, categoryImages: this.categoryImages});
     }
     if(this.activeTab == "tab2"){

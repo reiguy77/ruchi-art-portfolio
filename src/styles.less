@@ -9,7 +9,7 @@
 
 @font-face {
     font-family: 'title-font';
-    src: url('assets/fonts/Assistant/Assistant-VariableFont_wght.ttf');
+    src: url('assets/fonts/adequate/Adequate-ExtraLight.ttf');
     font-weight: normal;
     font-style: normal;
 }
@@ -21,9 +21,15 @@
 // }
 @font-face {
     font-family: 'body-font';
-    src: url('assets/fonts/lato/Lato-Thin.ttf');
+    src: url('assets/fonts/lato/Lato-Light.ttf');
     font-weight: normal;
     font-style: normal;
+}
+
+
+@font-face {
+  font-family: 'edit-font';
+  src: url('assets/fonts/lato/Lato-Black.ttf')
 }
 // @font-face {
 //     font-family: 'title-font';
@@ -62,15 +68,18 @@ p {
 
 button{
     max-width: 200px;
+    width: 60%;
     margin: 10px;
-    border: 1px solid fade(@primary, 40);
+    border: 1px solid lighten(@primary, 80);
     // box-shadow: 0px 1px 1px 1px lightgray;
+    font-family: 'body-font';
+    font-weight: bold;
     background:@secondary;
     padding:10px;
 }
 
-button:hover{
-    background-color: fade(@primary, 40);
+button:hover:enabled{
+    background-color: lighten(@primary, 40);
     color: @secondary;
     cursor:pointer;
 }
@@ -144,8 +153,8 @@ button:hover{
 
   .danger-btn:hover{
     border: 1px solid white;
-    background: @danger;
-    color: @secondary;
+    background: @danger !important;
+    color: @secondary !important;
   }
 
   /* slider.component.css */

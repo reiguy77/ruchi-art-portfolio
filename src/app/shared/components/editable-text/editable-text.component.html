@@ -1,9 +1,10 @@
 
-<div class="editable-text-container">
+<div class="editable-text-container" [class]="{'editMode': 'edit'}" >
     <div #text  *ngIf="!edit" class="value value-container" [ngClass]="{'editable':canEdit}">
         <div>{{value}}</div>
+        <div *ngIf="!value">Edit me!</div>
     </div>
-    <input #input class="editable-input" type="text" *ngIf="edit && !longForm" [(ngModel)]="value"  (keydown.enter)="onEnterKeyPressed($event)">  
+    <input #input class="editable-input" style="min-height: 100%" [class]="{'editMode': 'edit'}"  type="text" *ngIf="edit && !longForm" [(ngModel)]="value"  (keydown.enter)="onEnterKeyPressed($event)">  
     
     <textarea #input class="editable-input long" *ngIf="edit && longForm" [(ngModel)]="value"  (keydown.enter)="onEnterKeyPressed($event)"></textarea>    
 </div>

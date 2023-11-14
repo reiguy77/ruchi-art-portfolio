@@ -28,13 +28,16 @@
         <div class="tab-pane fade tab-pane-padded" [ngClass]= "{'active':activeTab == 'tab2', 'show':activeTab == 'tab2'}" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
             
             <div class="category-option">
-                <label for="lg-col"># of gallery columns on large screens:</label>
-                <input type="number" [(ngModel)] = "galleryCategoryProperties.numColumnsLarge" id="lg-col" name="lg-col" min="1" max="10">
+                <label for="lg-col"># of gallery columns:</label>
+                <input type="number" [(ngModel)] = "galleryCategoryProperties.numColumns" id="lg-col" name="lg-col" min="1" max="10">
             </div>
-            
             <div class="category-option">
-                <label for="sm-col"># of gallery columns on small screens:</label>
-                <input type="number" id="sm-col" name="sm-col" [(ngModel)] = "galleryCategoryProperties.numColumnsSmall" min="1" max="10">
+                <label for="lg-col">Gap between columns:</label>
+                <input type="number" [(ngModel)] = "galleryCategoryProperties.colGap" id="lg-col" name="lg-col" min="0">px
+            </div>
+            <div class="category-option">
+                <label for="lg-col">Gap between rows:</label>
+                <input type="number" [(ngModel)] = "galleryCategoryProperties.rowGap" id="lg-col" name="lg-col" min="0">px
             </div>
             <div class="category-option">
                 <label for="show-overlay">Show overlay on hover:</label>
@@ -47,8 +50,13 @@
                     [position]="'bottom-right'">
                 </color-picker>  
             </div>
-
-
+            <div class="category-option" >
+                <label for="">Description color:</label>
+                <color-picker
+                    [(color)]="galleryCategoryProperties.descriptionColor"
+                    [position]="'bottom-right'">
+                </color-picker>  
+            </div>
         </div>
         <div class="tab-pane fade tab-pane-padded" [ngClass]= "{'active':activeTab == 'tab3', 'show':activeTab == 'tab3'}" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
             <!-- <label for="categoryName" style="margin-right:20px">Category Name:</label>

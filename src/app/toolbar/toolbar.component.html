@@ -2,7 +2,7 @@
 <div class="header">
   <div *ngIf='!nameInline || smallScreensize' class="name-container" style="margin:auto;">
     <i *ngIf='userService.admin.editMode && !smallScreensize' (click)="switchName($event)" class="fa-solid fa-arrow-right-arrow-left swap-name-icon"></i>
-    <h1 class="name" (click)="openLink('about-me')">Ruchi Maniar</h1>
+    <h1 class="name" (click)="openLink('about-me')">{{name}}</h1>
   </div>
   <div style="margin:auto; display:flex; align-items: center; justify-content: center; position:relative">
     <i class="fa-solid fa-bars menu-icon" (click)="dropdownOpen = !dropdownOpen"></i>
@@ -12,10 +12,10 @@
         <div class="name-container">
           <div>
             <i *ngIf='userService.admin.editMode' (click)="switchName($event)" class="fa-solid fa-arrow-right-arrow-left swap-name-icon"></i>
-            <h1 class="name" (click)="openLink('about-me')" >Ruchi Maniar</h1>
+            <h1 class="name" (click)="openLink('about-me')" >{{name}}</h1>
           </div>
         </div>
-        <div  style="width: 30%; display:flex; flex-direction: column;">
+        <div  style="width: 45%; display:flex; flex-direction: column;">
           <ul>
             <ng-container *ngTemplateOutlet="sharedContent"></ng-container>
           </ul>

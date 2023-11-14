@@ -3,13 +3,14 @@ import { environment } from '../../../../environments/environment';
 import { ImageProperties, Image } from '../../interfaces/image.interface';
 import imageCompression from 'browser-image-compression';
 import heic2any from "heic2any";
+import { LoadingService } from '../loading/loading.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImageService {
 
-  constructor() { }
+  constructor(private loadingService:LoadingService) { }
 
   fileBaseUrl =  `${environment.server.protocol}://${environment.server.host}/api/file`;
   categories:string[] = [];
@@ -22,13 +23,14 @@ export class ImageService {
     useWebWorker: true,
   }
 
-  async addImages(categoryName:string, files:File[]){
+  async addImages(categoryName:string, images:File[]){
+    this.loadingService.startLoading('One moment, saving and compressing images...');
     let user = environment.user;
     const formData = new FormData();
     formData.append('appId', ''+environment.appId);
     formData.append('user', user);
     formData.append('subfolder', categoryName);
-    let compressedImages = await this.compressImages(files);
+    let compressedImages = await this.compressImages(images);
     for (let i = 0; i < compressedImages.length; i++) {
       formData.append('images', compressedImages[i]);
     }
@@ -38,6 +40,7 @@ export class ImageService {
     };
     let resp = await fetch(`${this.fileBaseUrl}/addImages`, options);
     let data = await resp.json();
+    this.loadingService.reset();
     return data;
   }
 
@@ -82,7 +85,6 @@ export class ImageService {
             properties:image.properties
           });
         })
-      console.log(images);
       return images;
       }
       return [];
@@ -100,32 +102,30 @@ export class ImageService {
           }),
       });
       let data = await resp.json();
-      console.log(data);
       return data;
   }
 
   async compressImages(files:File[]) {
-      const compressedFiles:Promise<File>[] = [];  
-      for(const file of files){
-        try{
-          let compressedFile;
-          if(file.name.toLowerCase().includes('heic')){
-            compressedFile = this.compressHEIC(file);
-          }
-          else{
-            compressedFile = imageCompression(file, this.compressionOptions);
-          }
-          compressedFiles.push(compressedFile);
-          console.log(file);
-          console.log('originalFile instanceof Blob', file instanceof Blob); // true
-          console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
-          // console.log(`new size! ${compressedFile.size / 1024 / 1024} MB` );
+    const compressedFiles:Promise<File>[] = [];  
+    for(const file of files){
+      try{
+        let compressedFile;
+        if(file.name.toLowerCase().includes('heic')){
+          compressedFile = this.compressHEIC(file);
         }
-        catch(e){
-          console.log("Failed to compress the file!", file, e);
+        else{
+          compressedFile = imageCompression(file, this.compressionOptions);
         }
-      }  
-      return await Promise.all(compressedFiles);
+        compressedFiles.push(compressedFile);
+        console.log('originalFile instanceof Blob', file instanceof Blob); // true
+        console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
+        // console.log(`new size! ${compressedFile.size / 1024 / 1024} MB` );
+      }
+      catch(e){
+        console.log("Failed to compress the file!", file, e);
+      }
+    }  
+    return await Promise.all(compressedFiles);
   }
 
   async compressHEIC(heicFile:File){
@@ -136,7 +136,7 @@ export class ImageService {
       {
       blob:heicFile as Blob,
       toType: "image/jpeg",
-			quality: 1,
+      quality: 1,
     });
     try{
       const file = new File([jpegFile as Blob], fileName, fileOptions);

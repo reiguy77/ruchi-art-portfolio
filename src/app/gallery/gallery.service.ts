@@ -24,8 +24,9 @@ export class GalleryService {
     galleryCategoryProperties: {
       showOverlay : true,
       overlayColor : '#fc853aaa',
-      numColumnsLarge : '3',
-      numColumnsSmall : '2'
+      numColumns : '3',
+      rowGap:20,
+      colGap:20
     },
     order:[]
   };
@@ -104,7 +105,7 @@ export class GalleryService {
         if(result.action ? result.action == 'updateProperties' : false){
           this.pageJson.galleryCategoryProperties = result.galleryCategoryProperties;
           this.updatePageJson();
-          return result.galleryCategoryProperties;
+          location.reload();
         }
       }
     );
@@ -122,9 +123,11 @@ export class GalleryService {
         user: this.user
       })
     }
-    await fetch(`${this.fileBaseUrl}/deleteImageCategory`, options);
+    let result = await fetch(`${this.fileBaseUrl}/deleteImageCategory`, options);
+    console.log(result);
     localStorage.removeItem('portfolioCategories');
   }  
+
   async getSelectedCategory(routeCategory: string){
     let categories = await this.getCategories();
     if(routeCategory){

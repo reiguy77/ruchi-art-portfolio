@@ -52,6 +52,5 @@ export class LoginComponent {
     let user = new User('maniarruchi@gmail.com');
     let password = 'artboss1998';
     let result = this.userService.createUser(user, password);
-    console.log(result);
   }
 }

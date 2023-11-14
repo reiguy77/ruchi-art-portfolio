@@ -23,13 +23,10 @@
         </div>
         <div class="property-container">
             <p class="title">
-                Description text color: 
-            </p>
-            <color-picker
-            [(color)]="imageProperties.descriptionColor"
-            [position]="colorPositionMap[position]"
-            (colorChange)="updateProperties(); ">
-            </color-picker>
+                Have image fill all space?
+            </p> 
+            <input type="checkbox"
+            [ngModel]="imageProperties.imageDisplay == 'cover' ? true : false" (change)="updateImageDisplay()">
         </div>
         <div class="property-container">
             <button class="danger-btn" (click)="deleteImage()">Delete Image</button>

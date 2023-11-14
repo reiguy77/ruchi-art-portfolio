@@ -1,8 +1,11 @@
-import { NgForOf, NgIf } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
+  Input,
   OnInit,
+  Output,
+  SimpleChanges,
   ViewEncapsulation
 } from '@angular/core';
 
@@ -12,7 +15,6 @@ import {
   GridsterComponent,
   GridsterConfig,
   GridsterItem,
-  GridsterItemComponent,
   GridsterItemComponentInterface,
   GridType
 } from 'angular-gridster2';
@@ -25,19 +27,24 @@ interface Safe extends GridsterConfig {
 @Component({
   selector: 'drag-and-drop',
   templateUrl: './drag-and-drop.component.html',
+  styleUrls: ["./drag-and-drop.component.less"],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
 export class DragAndDropComponent implements OnInit {
   options!: Safe;
   dashboard!: Array<GridsterItem>;
+  @Input() numColumns:string = "10";
+  @Input() items:GridItem[] = [];
+  @Output() orderOrResizeChange: EventEmitter<GridItem[]> = new EventEmitter<GridItem[]>();
+
+  waitToSendUpdates = true;
 
   static eventStart(
     item: GridsterItem,
     itemComponent: GridsterItemComponentInterface,
     event: MouseEvent
   ): void {
-    console.info('eventStart', item, itemComponent, event);
   }
 
   static eventStop(
@@ -45,7 +52,6 @@ export class DragAndDropComponent implements OnInit {
     itemComponent: GridsterItemComponentInterface,
     event: MouseEvent
   ): void {
-    console.info('eventStop', item, itemComponent, event);
   }
 
   static overlapEvent(
@@ -57,8 +63,12 @@ export class DragAndDropComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.updateOptions();
+  }
+
+  updateOptions(){
     this.options = {
-      gridType: GridType.Fit,
+      gridType: GridType.ScrollVertical,
       displayGrid: DisplayGrid.Always,
       pushItems: true,
       swap: false,
@@ -70,61 +80,20 @@ export class DragAndDropComponent implements OnInit {
         dragHandleClass: 'drag-handler',
         stop: DragAndDropComponent.eventStop,
         start: DragAndDropComponent.eventStart,
-        dropOverItems: false,
+        dropOverItems: true,
         dropOverItemsCallback: DragAndDropComponent.overlapEvent
       },
+      maxCols: parseInt(this.numColumns),
+      minCols: parseInt(this.numColumns),
       resizable: {
         enabled: true
-      }
+      },
     };
-
-    this.dashboard = [
-      { cols: 2, rows: 1, y: 0, x: 0 },
-      { cols: 2, rows: 2, y: 0, x: 2, hasContent: true },
-      { cols: 1, rows: 1, y: 0, x: 4 },
-      { cols: 1, rows: 1, y: 2, x: 5 },
-      { cols: 1, rows: 1, y: 1, x: 0 },
-      { cols: 1, rows: 1, y: 1, x: 0 },
-      {
-        cols: 2,
-        rows: 2,
-        y: 3,
-        x: 5,
-        minItemRows: 2,
-        minItemCols: 2,
-        label: 'Min rows & cols = 2'
-      },
-      {
-        cols: 2,
-        rows: 2,
-        y: 2,
-        x: 0,
-        maxItemRows: 2,
-        maxItemCols: 2,
-        label: 'Max rows & cols = 2'
-      },
-      {
-        cols: 2,
-        rows: 1,
-        y: 2,
-        x: 2,
-        dragEnabled: true,
-        resizeEnabled: true,
-        label: 'Drag&Resize Enabled'
-      },
-      {
-        cols: 1,
-        rows: 1,
-        y: 2,
-        x: 4,
-        dragEnabled: false,
-        resizeEnabled: false,
-        label: 'Drag&Resize Disabled'
-      },
-      { cols: 1, rows: 1, y: 2, x: 6 }
-    ];
   }
-
+  ngOnChanges(changes:SimpleChanges){
+    this.updateOptions();
+    // this.sendUpdatedItems();
+  }
   changedOptions(): void {
     if (this.options.api && this.options.api.optionsChanged) {
       this.options.api.optionsChanged();
@@ -140,4 +109,33 @@ export class DragAndDropComponent implements OnInit {
   addItem(): void {
     this.dashboard.push({ x: 0, y: 0, cols: 1, rows: 1 });
   }
+  allowUpdates(){
+    setTimeout(()=>{
+      this.waitToSendUpdates = false;
+    }, 1000)
+
+  }
+
+  sendUpdatedItems(){
+    if(!this.waitToSendUpdates){
+      this.orderOrResizeChange.emit(this.items.sort(this.comparePositions));
+    }
+  }
+  comparePositions(a:GridItem, b:GridItem) {
+    if(a.y == b.y){
+      return a.x - b.x
+    }
+    else{
+      return a.y - b.y;
+    }
+  }
+}
+
+export interface GridItem {
+  _id: string,
+  cols: number,
+  rows: number,
+  x: number, 
+  y: number,
+  imageUrl: string
 }

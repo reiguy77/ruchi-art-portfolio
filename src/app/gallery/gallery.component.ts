@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/services/user.service';
 import { GalleryService } from './gallery.service';
 import { Category } from '../models/Category';
-import { ImageProperties } from '../shared/interfaces/image.interface';
+import { ImageDisplayType, ImageProperties } from '../shared/interfaces/image.interface';
 import { ImageService } from '../shared/services/image/image.service';
 import { PageService } from '../shared/services/page/page.service';
 import { PhotoGalleryComponent } from '../photo-gallery/photo-gallery.component';
@@ -40,6 +40,7 @@ export class GalleryComponent {
     properties:ImageProperties
   }[] = [];
   newFiles: File[] = [];
+  dragAndDropViewOpen = false;
 
   @ViewChild("photoGallery") photoGallery!: PhotoGalleryComponent;
   constructor(private http: HttpClient, private sanitizer: DomSanitizer, 
@@ -84,6 +85,9 @@ export class GalleryComponent {
             spanCol: imageProperties.hasOwnProperty('spanCol') ? imageProperties.spanCol : '',
             spanRow: imageProperties.hasOwnProperty('spanRow') ? imageProperties.spanRow : '',
             backgroundColor: imageProperties.hasOwnProperty('backgroundColor') ? imageProperties.backgroundColor :  '#ffffff',
+            x: imageProperties.x,
+            y: imageProperties.y,
+            imageDisplay: imageProperties.hasOwnProperty('imageDisplay') ? imageProperties.imageDisplay : ImageDisplayType.Cover
           }
         }
       });

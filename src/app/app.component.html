@@ -10,4 +10,10 @@
 </div>
 <button *ngIf="userService.admin.loggedIn && userService.admin.editMode" matTooltip="Info about the action"
 #tooltip="matTooltip" (click)="logout()" class="logout">Logout</button>
+
+<loading-indicator
+[show]="loadingService.isLoading"
+[message]="loadingService.message">
+</loading-indicator>
+
 <router-outlet></router-outlet>
