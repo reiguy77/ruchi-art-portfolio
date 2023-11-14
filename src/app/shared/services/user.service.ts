@@ -168,9 +168,10 @@ export class UserService {
     this.access_token = localStorage.getItem('access_token') ?? undefined;
     this.refresh_token = localStorage.getItem('refresh_token') ?? undefined;
     this.expires_at = localStorage.getItem('expires_at') ?? undefined;
-
-    this.admin.loggedIn = JSON.parse(localStorage.getItem('loggedIn') ?? '') ?? false;
-    this.admin.editMode = JSON.parse(localStorage.getItem('editMode') ?? '') ?? false;
+    let localLoggedIn = localStorage.getItem('loggedIn');
+    let localEditMode = localStorage.getItem('editMode');
+    this.admin.loggedIn =  localLoggedIn ? JSON.parse(localLoggedIn) : false;
+    this.admin.editMode = localEditMode ? JSON.parse(localEditMode) : false;
     // this.updateAdmin(this.admin.loggedIn, this.admin.loggedIn);
   }
 
